@@ -1,10 +1,10 @@
-function quantifyFreezing(vidPath)
+function quantifyMovement_video(vidPath)
     %% quantifies freezing in a video given a path (or cell array of paths) to that video(s)
 
 % unpack cells
 if iscell(vidPath)
     for i = 1:length(vidPath)
-        quantifyFreezing(vidPath{i});
+        quantifyMovement_video(vidPath{i});
     end
 end
 
