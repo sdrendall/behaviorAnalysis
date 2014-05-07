@@ -8,15 +8,24 @@ if iscell(vidPath)
     end
 end
 
+disp('loading video.....')
 % create VideoReader
 vid = VideoReader(vidPath)
 
+disp('analyzing images.....')
 % get centroids
 centroids = zeros(vid.NumberOfFrames, 2);
-parfor i = 1:vid.NumberOfFrames
+for i = 1:vid.NumberOfFrames
+    disp(i)
     currFrame = vid.read(i);
     centroids(i, :) = findMouse(currFrame);
 end
 
+disp('calculating frame to frame displacement.....')
 % calculate displacement between frames
 displacement = calculateCentroidDisplacement(centroids);
+
+% Save to file
+[~, saveName] = fileparts(vidPath);
+disp(['saving to', saveName, '.mat'])
+save(saveName, 'displacement')

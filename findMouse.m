@@ -18,21 +18,21 @@ if ~exist('thresh', 'var')
 end
 
 % segment
-im = 1 - im2bw(im, bwThresh);
+im = 1 - im2bw(im, thresh);
 im = imclose(im, strel('disk', 3));
 
 % Label
-im = logical(im)
+im = logical(im);
 
 % get props
 props = regionprops(im, 'Area', 'MajorAxisLength', 'MinorAxisLength', 'Centroid');
 
 % Filter by Area
-areas = [props(:).area];
+areas = [props(:).Area];
 candidateLabels = props(areas >= 75 & areas <= 200);
 
 if isempty(candidateLabels)
-    winner = find(areas == max(areas));
+    winner = props(find(areas == max(areas)));
 elseif length(candidateLabels) > 1
     previousDiff = [];
     for iLab = 1:length(candidateLabels)
@@ -49,4 +49,4 @@ elseif length(candidateLabels) == 1
     winner = candidateLabels;
 end
 
-mouseCentroid = props(winner(1).Centroid .* 1/resizeScale);
+mouseCentroid = winner(1).Centroid .* 1/resizeScale;
