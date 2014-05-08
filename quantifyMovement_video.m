@@ -28,4 +28,4 @@ displacement = calculateCentroidDisplacement(centroids);
 % Save to file
 [~, saveName] = fileparts(vidPath);
 disp(['saving to', saveName, '.mat'])
-save(saveName, 'displacement')
+save(saveName, 'displacement', 'centroids')
