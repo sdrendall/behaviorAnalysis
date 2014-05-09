@@ -16,7 +16,6 @@ disp('analyzing images.....')
 % get centroids
 centroids = zeros(vid.NumberOfFrames, 2);
 parfor i = 1:vid.NumberOfFrames
-    disp(i)
     currFrame = vid.read(i);
     centroids(i, :) = findMouse(currFrame);
 end
