@@ -15,7 +15,7 @@ vid = VideoReader(vidPath)
 disp('analyzing images.....')
 % get centroids
 centroids = zeros(vid.NumberOfFrames, 2);
-for i = 1:vid.NumberOfFrames
+parfor i = 1:vid.NumberOfFrames
     disp(i)
     currFrame = vid.read(i);
     centroids(i, :) = findMouse(currFrame);
