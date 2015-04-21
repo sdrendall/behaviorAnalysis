@@ -25,28 +25,22 @@ im = imclose(im, strel('disk', 3));
 im = logical(im);
 
 % get props
-props = regionprops(im, 'Area', 'MajorAxisLength', 'MinorAxisLength', 'Centroid');
+props = regionprops(im, 'Area', 'MajorAxisLength', 'MinorAxisLength', 'Centroid', 'Perimeter');
 
 % Filter by Area
 areas = [props(:).Area];
 candidateLabels = props(areas >= 75 & areas <= 200);
 
+
 if isempty(candidateLabels)
-    winner = props(find(areas == max(areas)));
-elseif length(candidateLabels) > 1
-    previousDiff = [];
-    for iLab = 1:length(candidateLabels)
-        diff = props(candidateLabels(iLab)).MajorAxisLength - props(candidateLabels(iLab)).MinorAxisLength;
-        if iLab == 1 || diff < previousDiff
-            winner = candidateLabels(iLab);
-        elseif diff == previousDiff
-            % FLAG
-            'diffs are equal'
-        end
-        previousDiff = diff;
-    end
-elseif length(candidateLabels) == 1
+    winner = props(find(areas == max(areas)), 1, 'first');
+elseif size(candidateLabels, 1) > 1
+    perimeters = [props(areas >= 75 & areas <= 200).Perimeter];
+    areas = areas(areas >= 75 & areas <= 200);
+
+    winner = candidateLabels(find(perimeters./areas == min(perimeters./areas), 1, 'first'));
+else
     winner = candidateLabels;
 end
-
+    
 mouseCentroid = winner(1).Centroid .* 1/resizeScale;
