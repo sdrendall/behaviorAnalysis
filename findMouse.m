@@ -5,12 +5,12 @@ function mouseCentroid = findMouse(im, thresh)
     %
     % returns coordinates for the mouse's centroid
 
+% grayscale and normalize
+im = mat2gray(rgb2gray(im));
+
 % Downsample im
 resizeScale = .1;
 im = imresize(im, resizeScale);
-
-% grayscale and normalize
-im = mat2gray(rgb2gray(im));
 
 % set threshold, if necessary
 if ~exist('thresh', 'var')
@@ -33,12 +33,21 @@ candidateLabels = props(areas >= 75 & areas <= 200);
 
 
 if isempty(candidateLabels)
-    winner = props(find(areas == max(areas)), 1, 'first');
+    try
+        maxAreaInd = find(areas == max(areas), 1, 'first');
+        winner = props(maxAreaInd);
+    catch err
+        disp(['maxAreaInd: ', maxAreaInd])
+        disp(getReport(err))
+        mouseCentroid = [0, 0];
+        return
+    end   
 elseif size(candidateLabels, 1) > 1
     perimeters = [props(areas >= 75 & areas <= 200).Perimeter];
     areas = areas(areas >= 75 & areas <= 200);
-
-    winner = candidateLabels(find(perimeters./areas == min(perimeters./areas), 1, 'first'));
+    
+    minPerimeterRatioInd = find(perimeters./areas == min(perimeters./areas), 1, 'first');
+    winner = candidateLabels(minPerimeterRatioInd);
 else
     winner = candidateLabels;
 end
