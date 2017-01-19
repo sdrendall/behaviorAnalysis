@@ -40,6 +40,7 @@ if isempty(candidateLabels)
         disp(['maxAreaInd: ', maxAreaInd])
         disp(getReport(err))
         mouseCentroid = [0, 0];
+        mask = im;
         return
     end
 
