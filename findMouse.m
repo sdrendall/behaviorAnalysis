@@ -6,7 +6,7 @@ function [mouseCentroid, mask] = findMouse(im, thresh)
     % returns coordinates for the mouse's centroid
 
 % grayscale and normalize
-im = mat2gray(rgb2gray(im));
+im = mat2gray(im);
 
 % Downsample im
 resizeScale = .4;
@@ -19,6 +19,7 @@ end
 
 % segment
 im = imfilter(im, fspecial('gaussian', 24, 8));
+im = imerode(im, strel('disk', 8));
 im = 1 - im2bw(im, thresh);
 im = imclose(im, strel('disk', 12));
 
@@ -30,7 +31,7 @@ props = regionprops(im, 'Area', 'MajorAxisLength', 'MinorAxisLength', 'Centroid'
 
 % Filter by Area
 areas = [props(:).Area];
-candidateLabels = props(areas >= 75 & areas <= 200);
+candidateLabels = props(areas >= 8 * 75 & areas <= 16 * 200);
 
 if isempty(candidateLabels)
     try
@@ -45,8 +46,8 @@ if isempty(candidateLabels)
     end
 
 elseif size(candidateLabels, 1) > 1
-    perimeters = [props(areas >= 75 & areas <= 200).Perimeter];
-    areas = areas(areas >= 75 & areas <= 200);
+    perimeters = [props(areas >= 8 * 75 & areas <= 16 * 200).Perimeter];
+    areas = areas(areas >= 8 * 75 & areas <= 16 * 200);
     
     minPerimeterRatioInd = find(perimeters./areas == min(perimeters./areas), 1, 'first');
     winner = candidateLabels(minPerimeterRatioInd);
